@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutGrid, Package, ShoppingCart, LogOut } from 'lucide-react';
+import { LayoutGrid, Package, ShoppingCart, LogOut, Users, Settings, PlusCircle, History } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Layout() {
@@ -17,13 +17,17 @@ export default function Layout() {
             : 'text-ios-gray hover:bg-white/5 hover:text-white'
         }`;
 
+    const isAdmin = user?.role === 'admin';
+
     return (
         <div className="flex h-screen bg-black">
             {/* Sidebar Glass */}
             <aside className="w-80 p-6 flex flex-col border-r border-white/5 bg-[#1C1C1E]/30 backdrop-blur-xl hidden md:flex">
                 <div className="mb-10 px-4">
                     <h1 className="text-2xl font-bold text-white tracking-wide">Stock OS</h1>
-                    <p className="text-xs text-ios-gray mt-1 uppercase tracking-wider">v1.2.0 • {user?.username}</p>
+                    <p className="text-xs text-ios-gray mt-1 uppercase tracking-wider">
+                        {isAdmin ? 'Administrateur' : 'Vendeur'} • {user?.username}
+                    </p>
                 </div>
 
                 <nav className="flex-1 space-y-2">
@@ -31,14 +35,43 @@ export default function Layout() {
                         <LayoutGrid size={24} />
                         <span className="font-medium text-lg">Dashboard</span>
                     </NavLink>
-                    <NavLink to="/products" className={navItemClass}>
-                        <Package size={24} />
-                        <span className="font-medium text-lg">Produits</span>
-                    </NavLink>
-                    <NavLink to="/orders" className={navItemClass}>
-                        <ShoppingCart size={24} />
-                        <span className="font-medium text-lg">Commandes</span>
-                    </NavLink>
+
+                    {isAdmin ? (
+                        // MENU ADMIN
+                        <>
+                            <NavLink to="/products" className={navItemClass}>
+                                <Package size={24} />
+                                <span className="font-medium text-lg">Produits</span>
+                            </NavLink>
+                            <NavLink to="/orders" className={navItemClass}>
+                                <ShoppingCart size={24} />
+                                <span className="font-medium text-lg">Ventes Globales</span>
+                            </NavLink>
+                            <div className="pt-4 pb-2 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Administration</div>
+                            <NavLink to="/users" className={navItemClass}>
+                                <Users size={24} />
+                                <span className="font-medium text-lg">Utilisateurs</span>
+                            </NavLink>
+                        </>
+                    ) : (
+                        // MENU USER (VENDEUR)
+                        <>
+                            <NavLink to="/pos" className={navItemClass}>
+                                <PlusCircle size={24} />
+                                <span className="font-medium text-lg">Nouvelle Vente</span>
+                            </NavLink>
+                            <NavLink to="/my-sales" className={navItemClass}>
+                                <History size={24} />
+                                <span className="font-medium text-lg">Mes Ventes</span>
+                            </NavLink>
+                        </>
+                    )}
+
+                    {/* COMMON LINKS */}
+                    {/* <NavLink to="/settings" className={navItemClass}>
+            <Settings size={24} />
+            <span className="font-medium text-lg">Paramètres</span>
+          </NavLink> */}
                 </nav>
 
                 <button
