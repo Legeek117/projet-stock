@@ -1,4 +1,4 @@
-const fetch = require('node-fetch'); // Needs node-fetch installed or use built-in fetch in Node 18+
+// Native fetch is used (Node 18+)
 
 // URL fournie par l'utilisateur
 const BASE_URL = 'http://development-moved-favour-cup.trycloudflare.com:8080/projet-stock';
@@ -41,9 +41,6 @@ async function verifyDeployment() {
     }
 }
 
-// Check Node version for fetch compatibility
-if (Number(process.versions.node.split('.')[0]) < 18) {
-    console.log("⚠️  Attention: Ce script utilise 'fetch'. Si vous êtes sous Node < 18, installez node-fetch ou mettez à jour Node.");
-}
+
 
 verifyDeployment();
