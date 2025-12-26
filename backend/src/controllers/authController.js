@@ -44,22 +44,28 @@ exports.login = async (req, res) => {
         }
 
         // Generate JWT
-        const payload = {
+        const token = jwt.sign(
+            {
+                user: {
+                    id: user.rows[0].id,
+                    username: user.rows[0].username,
+                    role: user.rows[0].role
+                }
+            }, // Payload correct structurée comme attendu par authMiddleware
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            message: 'Login successful',
+            token,
             user: {
                 id: user.rows[0].id,
+                username: user.rows[0].username,
+                email: user.rows[0].email,
                 role: user.rows[0].role
             }
-        };
-
-        jwt.sign(
-            payload,
-            process.env.JWT_SECRET,
-            { expiresIn: '24h' },
-            (err, token) => {
-                if (err) throw err;
-                res.json({ token, user: { id: user.rows[0].id, username: user.rows[0].username, role: user.rows[0].role } });
-            }
-        );
+        });
 
     } catch (err) {
         console.error(err.message);
