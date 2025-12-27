@@ -7,10 +7,8 @@ import Dashboard from './pages/Dashboard';
 import Products from './pages/Products';
 import Orders from './pages/Orders';
 import UsersPage from './pages/Users';
-
-// Placeholder Pages (To be implemented next)
-const POS = () => <div className="text-white">Point de Vente (Bientôt)</div>;
-const MySales = () => <div className="text-white">Mes Ventes (Bientôt)</div>;
+import POS from './pages/POS';
+import MySales from './pages/MySales';
 
 function App() {
   return (
