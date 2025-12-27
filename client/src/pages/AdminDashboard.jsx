@@ -52,13 +52,13 @@ export default function AdminDashboard() {
     ];
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 md:space-y-8">
             <div>
-                <h2 className="text-3xl font-bold text-white">Vue d'ensemble Admin</h2>
-                <p className="text-ios-gray mt-1">Pilotage de l'activité commerciale</p>
+                <h2 className="text-2xl md:text-3xl font-bold text-white">Vue d'overview Admin</h2>
+                <p className="text-ios-gray mt-1 text-sm">Pilotage de l'activité commerciale</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {cards.map((card, i) => (
                     <div key={i} className={`glass-panel p-6 rounded-3xl border ${card.border} hover:scale-[1.02] transition-transform`}>
                         <div className="flex justify-between items-start mb-4">
@@ -73,11 +73,11 @@ export default function AdminDashboard() {
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                 {/* Chart Placeholder (Simple Bar Visualisation) */}
-                <div className="glass-panel p-8 rounded-[32px]">
-                    <h3 className="text-xl font-bold text-white mb-6">Ventes des 7 derniers jours</h3>
-                    <div className="h-64 flex items-end justify-between gap-2">
+                <div className="glass-panel p-6 md:p-8 rounded-2xl md:rounded-[32px]">
+                    <h3 className="text-lg md:text-xl font-bold text-white mb-4 md:mb-6">Ventes des 7 derniers jours</h3>
+                    <div className="h-48 md:h-64 flex items-end justify-between gap-2">
                         {stats.salesChart.length > 0 ? stats.salesChart.map((day, i) => {
                             const maxVal = Math.max(...stats.salesChart.map(s => parseFloat(s.total) || 0), 100);
                             const height = (parseFloat(day.total) / maxVal) * 100;

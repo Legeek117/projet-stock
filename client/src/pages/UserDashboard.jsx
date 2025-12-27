@@ -25,19 +25,19 @@ export default function UserDashboard() {
     if (!stats || !stats.salesToday) return <div className="text-red-400">Erreur de chargement ou aucune donnée disponible.</div>;
 
     return (
-        <div className="space-y-8">
-            <div className="flex justify-between items-end">
+        <div className="space-y-6 md:space-y-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold text-white">Mon Espace Vendeur</h2>
-                    <p className="text-ios-gray mt-1">Vos performances du moment</p>
+                    <h2 className="text-2xl md:text-3xl font-bold text-white">Mon Espace Vendeur</h2>
+                    <p className="text-ios-gray mt-1 text-sm">Vos performances du moment</p>
                 </div>
-                <Link to="/pos" className="bg-ios-blue hover:bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-[0_0_20px_rgba(10,132,255,0.4)] transition-all transform hover:scale-105">
+                <Link to="/pos" className="w-full sm:w-auto bg-ios-blue hover:bg-blue-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(10,132,255,0.4)] transition-all transform hover:scale-105">
                     <PlusCircle size={20} />
                     Nouvelle Vente
                 </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div className="glass-panel p-8 rounded-[32px] border border-green-500/20 bg-gradient-to-br from-green-500/5 to-transparent">
                     <h3 className="text-green-300 font-medium uppercase tracking-wider text-sm mb-2">Ventes du Jour</h3>
                     <div className="flex items-baseline gap-2">

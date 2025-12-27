@@ -12,10 +12,11 @@ export default function MySales() {
 
     const fetchHistory = async () => {
         try {
-            const data = await api('/orders/history');
-            setSales(data);
+            const data = await api('/orders');
+            setSales(Array.isArray(data) ? data : []);
         } catch (error) {
-            console.error("Erreur historique", error);
+            console.error('Erreur chargement historique:', error);
+            setSales([]);
         } finally {
             setLoading(false);
         }

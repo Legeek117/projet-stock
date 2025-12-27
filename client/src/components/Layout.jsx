@@ -12,17 +12,33 @@ export default function Layout() {
     };
 
     const navItemClass = ({ isActive }) =>
-        `flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 ${isActive
+        `flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-4 p-3 md:p-4 rounded-2xl transition-all duration-300 ${isActive
             ? 'bg-ios-blue text-white shadow-[0_0_15px_rgba(10,132,255,0.4)]'
             : 'text-ios-gray hover:bg-white/5 hover:text-white'
         }`;
 
     const isAdmin = user?.role === 'admin';
 
+    // Navigation items basés sur le rôle
+    const adminNavItems = [
+        { to: '/', icon: LayoutGrid, label: 'Dashboard' },
+        { to: '/products', icon: Package, label: 'Produits' },
+        { to: '/orders', icon: ShoppingCart, label: 'Ventes' },
+        { to: '/users', icon: Users, label: 'Équipe' },
+    ];
+
+    const userNavItems = [
+        { to: '/', icon: LayoutGrid, label: 'Dashboard' },
+        { to: '/pos', icon: PlusCircle, label: 'Vente' },
+        { to: '/my-sales', icon: History, label: 'Historique' },
+    ];
+
+    const navItems = isAdmin ? adminNavItems : userNavItems;
+
     return (
-        <div className="flex h-screen bg-black">
-            {/* Sidebar Glass */}
-            <aside className="w-80 p-6 flex flex-col border-r border-white/5 bg-[#1C1C1E]/30 backdrop-blur-xl hidden md:flex">
+        <div className="flex flex-col md:flex-row h-screen bg-black">
+            {/* Desktop Sidebar (hidden on mobile) */}
+            <aside className="hidden md:flex w-80 p-6 flex-col border-r border-white/5 bg-[#1C1C1E]/30 backdrop-blur-xl">
                 <div className="mb-10 px-4">
                     <h1 className="text-2xl font-bold text-white tracking-wide">Stock OS</h1>
                     <p className="text-xs text-ios-gray mt-1 uppercase tracking-wider">
@@ -31,47 +47,12 @@ export default function Layout() {
                 </div>
 
                 <nav className="flex-1 space-y-2">
-                    <NavLink to="/" className={navItemClass}>
-                        <LayoutGrid size={24} />
-                        <span className="font-medium text-lg">Dashboard</span>
-                    </NavLink>
-
-                    {isAdmin ? (
-                        // MENU ADMIN
-                        <>
-                            <NavLink to="/products" className={navItemClass}>
-                                <Package size={24} />
-                                <span className="font-medium text-lg">Produits</span>
-                            </NavLink>
-                            <NavLink to="/orders" className={navItemClass}>
-                                <ShoppingCart size={24} />
-                                <span className="font-medium text-lg">Ventes Globales</span>
-                            </NavLink>
-                            <div className="pt-4 pb-2 px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Administration</div>
-                            <NavLink to="/users" className={navItemClass}>
-                                <Users size={24} />
-                                <span className="font-medium text-lg">Utilisateurs</span>
-                            </NavLink>
-                        </>
-                    ) : (
-                        // MENU USER (VENDEUR)
-                        <>
-                            <NavLink to="/pos" className={navItemClass}>
-                                <PlusCircle size={24} />
-                                <span className="font-medium text-lg">Nouvelle Vente</span>
-                            </NavLink>
-                            <NavLink to="/my-sales" className={navItemClass}>
-                                <History size={24} />
-                                <span className="font-medium text-lg">Mes Ventes</span>
-                            </NavLink>
-                        </>
-                    )}
-
-                    {/* COMMON LINKS */}
-                    {/* <NavLink to="/settings" className={navItemClass}>
-            <Settings size={24} />
-            <span className="font-medium text-lg">Paramètres</span>
-          </NavLink> */}
+                    {navItems.map((item) => (
+                        <NavLink key={item.to} to={item.to} className={navItemClass}>
+                            <item.icon size={24} />
+                            <span className="font-medium text-lg">{item.label}</span>
+                        </NavLink>
+                    ))}
                 </nav>
 
                 <button
@@ -84,17 +65,43 @@ export default function Layout() {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-auto relative rounded-l-[40px] bg-black border-l border-white/5 shadow-[-20px_0_50px_rgba(0,0,0,0.5)]">
-                {/* Top Bar Mobile (visible only on small screens) */}
-                <div className="md:hidden p-4 flex justify-between items-center glass sticky top-0 z-50">
-                    <span className="font-bold">Stock OS</span>
-                    <button onClick={handleLogout}><LogOut size={20} /></button>
+            <main className="flex-1 overflow-auto relative bg-black pb-20 md:pb-0">
+                {/* Mobile Top Bar */}
+                <div className="md:hidden sticky top-0 z-40 bg-[#1C1C1E]/95 backdrop-blur-xl border-b border-white/10 p-4">
+                    <div className="flex justify-between items-center">
+                        <div>
+                            <h1 className="text-lg font-bold text-white">Stock OS</h1>
+                            <p className="text-xs text-ios-gray">{user?.username}</p>
+                        </div>
+                        <button
+                            onClick={handleLogout}
+                            className="p-2 rounded-xl text-red-400 hover:bg-red-500/10 transition-all"
+                        >
+                            <LogOut size={20} />
+                        </button>
+                    </div>
                 </div>
 
-                <div className="p-8 max-w-7xl mx-auto">
+                <div className="p-4 md:p-8 max-w-7xl mx-auto">
                     <Outlet />
                 </div>
             </main>
+
+            {/* Mobile Bottom Navigation (hidden on desktop) */}
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1C1C1E]/95 backdrop-blur-xl border-t border-white/10">
+                <div className="grid grid-cols-4 gap-1 p-2">
+                    {navItems.map((item) => (
+                        <NavLink
+                            key={item.to}
+                            to={item.to}
+                            className={navItemClass}
+                        >
+                            <item.icon size={22} />
+                            <span className="text-xs font-medium">{item.label}</span>
+                        </NavLink>
+                    ))}
+                </div>
+            </nav>
         </div>
     );
 }

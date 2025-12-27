@@ -44,32 +44,32 @@ export default function Products() {
 
     const filteredProducts = products.filter(p =>
         p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.category?.toLowerCase().includes(search.toLowerCase())
+        p.category_name?.toLowerCase().includes(search.toLowerCase())
     );
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
             {/* Header & Actions */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col gap-3 md:gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold text-white">Produits</h2>
-                    <p className="text-ios-gray mt-1">Gérez votre inventaire ({products.length} articles)</p>
+                    <h2 className="text-2xl md:text-3xl font-bold text-white">Produits</h2>
+                    <p className="text-ios-gray mt-1 text-sm">Gérez votre inventaire ({products.length} articles)</p>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <div className="relative group">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <div className="relative group flex-1 sm:flex-initial">
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-ios-gray group-focus-within:text-ios-blue transition-colors" size={18} />
                         <input
                             type="text"
                             placeholder="Rechercher..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="bg-[#1C1C1E] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-ios-blue w-64 transition-all"
+                            className="bg-[#1C1C1E] border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-ios-blue w-full sm:w-64 transition-all"
                         />
                     </div>
                     <button
                         onClick={handleAdd}
-                        className="flex items-center gap-2 bg-ios-blue hover:bg-blue-600 text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-blue-500/20 active:scale-95"
+                        className="flex items-center justify-center gap-2 bg-ios-blue hover:bg-blue-600 text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-lg shadow-blue-500/20 active:scale-95"
                     >
                         <Plus size={18} />
                         <span>Ajouter</span>
@@ -78,25 +78,25 @@ export default function Products() {
             </div>
 
             {/* Table Panel */}
-            <div className="glass-panel overflow-hidden rounded-[24px]">
+            <div className="glass-panel overflow-hidden rounded-2xl md:rounded-[24px]">
                 {loading ? (
-                    <div className="p-12 text-center text-ios-gray">Chargement...</div>
+                    <div className="p-8 md:p-12 text-center text-ios-gray">Chargement...</div>
                 ) : (
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left">
+                        <table className="w-full text-left min-w-[640px]">
                             <thead className="bg-white/5 border-b border-white/5 text-ios-gray text-xs uppercase tracking-wider">
                                 <tr>
-                                    <th className="p-6 font-medium">Nom</th>
-                                    <th className="p-6 font-medium">Catégorie</th>
-                                    <th className="p-6 font-medium">Prix</th>
-                                    <th className="p-6 font-medium">Stock</th>
-                                    <th className="p-6 font-medium text-right">Actions</th>
+                                    <th className="p-4 md:p-6 font-medium">Nom</th>
+                                    <th className="p-4 md:p-6 font-medium">Catégorie</th>
+                                    <th className="p-4 md:p-6 font-medium">Prix</th>
+                                    <th className="p-4 md:p-6 font-medium">Stock</th>
+                                    <th className="p-4 md:p-6 font-medium text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
                                 {filteredProducts.map((product) => (
                                     <tr key={product.id} className="hover:bg-white/5 transition-colors group">
-                                        <td className="p-6">
+                                        <td className="p-4 md:p-6">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-ios-blue">
                                                     <Package size={20} />
@@ -107,19 +107,19 @@ export default function Products() {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="p-6 text-sm text-gray-300">
-                                            <span className="bg-white/5 px-3 py-1 rounded-full border border-white/5">
-                                                {product.category || 'N/A'}
+                                        <td className="p-4 md:p-6 text-sm text-gray-300">
+                                            <span className="bg-white/5 px-3 py-1 rounded-full border border-white/5 text-xs md:text-sm">
+                                                {product.category_name || 'Sans catégorie'}
                                             </span>
                                         </td>
-                                        <td className="p-6 font-medium text-white">{product.price} €</td>
-                                        <td className="p-6">
+                                        <td className="p-4 md:p-6 font-medium text-white text-sm md:text-base">{parseFloat(product.price).toFixed(0)} FCFA</td>
+                                        <td className="p-4 md:p-6">
                                             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${product.stock_quantity < 5 ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300'}`}>
-                                                {product.stock_quantity} en stock
+                                                {product.stock_quantity}
                                             </span>
                                         </td>
-                                        <td className="p-6 text-right">
-                                            <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <td className="p-4 md:p-6 text-right">
+                                            <div className="flex items-center justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                                                 <button onClick={() => handleEdit(product)} className="p-2 hover:bg-white/10 rounded-lg text-ios-blue transition-colors">
                                                     <Edit2 size={18} />
                                                 </button>
@@ -145,10 +145,16 @@ export default function Products() {
 
             {isModalOpen && (
                 <ProductModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
                     product={editingProduct}
-                    onSuccess={fetchProducts}
+                    onClose={() => {
+                        setIsModalOpen(false);
+                        setEditingProduct(null);
+                    }}
+                    onSave={() => {
+                        setIsModalOpen(false);
+                        setEditingProduct(null);
+                        fetchProducts();
+                    }}
                 />
             )}
         </div>

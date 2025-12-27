@@ -65,28 +65,42 @@ export default function POS() {
     const changeDue = amountReceived ? parseFloat(amountReceived) - totalAmount : 0;
 
     const handleValidateSale = async () => {
-        if (cart.length === 0) return;
+        if (cart.length === 0) {
+            alert("Le panier est vide !");
+            return;
+        }
+
+        if (!amountReceived || parseFloat(amountReceived) < totalAmount) {
+            alert("Montant reçu insuffisant !");
+            return;
+        }
 
         try {
-            await api('/orders/create', { // Route backend à vérifier (habituellement /orders ou /orders/create)
+            await api('/orders', {
                 method: 'POST',
                 body: JSON.stringify({
-                    items: cart.map(i => ({ product_id: i.id, quantity: i.quantity }))
+                    items: cart.map(item => ({
+                        product_id: item.id,
+                        quantity: item.quantity
+                    })),
+                    total_amount: totalAmount
                 })
             });
 
+            // Animation de succès
             setShowSuccess(true);
-            // Reset après 2 secondes
+
+            // Reset après 1.5 secondes
             setTimeout(() => {
                 setShowSuccess(false);
                 setCart([]);
-                setAmountReceived("");
-                fetchProducts(); // Rafraîchir les stocks
-            }, 2000);
+                setAmountReceived('');
+                fetchProducts(); // Refresh stock
+            }, 1500);
 
         } catch (error) {
-            alert("Erreur lors de la validation de la vente");
-            console.error(error);
+            console.error('Erreur vente:', error);
+            alert('Erreur lors de la validation (stock insuffisant ?)');
         }
     };
 
@@ -96,25 +110,25 @@ export default function POS() {
     );
 
     return (
-        <div className="flex flex-col lg:flex-row h-[calc(100vh-100px)] gap-6">
+        <div className="flex flex-col lg:flex-row gap-4 md:gap-6 min-h-[calc(100vh-200px)]">
 
             {/* LEFT: Product Grid */}
-            <div className="flex-1 flex flex-col gap-6">
-                <div className="flex justify-between items-center">
-                    <h2 className="text-3xl font-bold text-white">Caisse</h2>
-                    <div className="relative">
+            <div className="flex-1 flex flex-col gap-4 md:gap-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <h2 className="text-2xl md:text-3xl font-bold text-white">Caisse</h2>
+                    <div className="relative w-full sm:w-auto">
                         <Search className="absolute left-3 top-3 text-gray-500" size={20} />
                         <input
                             type="text"
                             placeholder="Scanner ou chercher..."
-                            className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-ios-blue w-64"
+                            className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-ios-blue w-full sm:w-64"
                             value={search}
                             onChange={e => setSearch(e.target.value)}
                         />
                     </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto pr-2 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 content-start">
+                <div className="flex-1 overflow-y-auto pr-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4 content-start">
                     {filteredProducts.map(product => (
                         <div key={product.id}
                             onClick={() => product.stock_quantity > 0 && addToCart(product)}
@@ -137,7 +151,7 @@ export default function POS() {
             </div>
 
             {/* RIGHT: Cart / Ticket */}
-            <div className="w-full lg:w-[400px] glass-panel rounded-[32px] flex flex-col h-full border border-white/10">
+            <div className="w-full lg:w-[400px] glass-panel rounded-2xl md:rounded-[32px] flex flex-col border border-white/10 lg:h-full">
                 <div className="p-6 border-b border-white/5">
                     <h3 className="text-xl font-bold text-white flex items-center gap-2">
                         <ShoppingCart size={24} className="text-ios-blue" />
@@ -210,14 +224,14 @@ export default function POS() {
                     <button
                         onClick={handleValidateSale}
                         disabled={cart.length === 0 || loading || (amountReceived && changeDue < 0)}
-                        className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all ${showSuccess
-                            ? 'bg-green-500 text-white'
+                        className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all duration-300 ${showSuccess
+                            ? 'bg-green-500 text-white scale-105 shadow-[0_0_30px_rgba(34,197,94,0.5)]'
                             : cart.length > 0 && (!amountReceived || changeDue >= 0)
-                                ? 'bg-ios-blue hover:bg-blue-600 text-white shadow-[0_0_20px_rgba(10,132,255,0.3)]'
+                                ? 'bg-ios-blue hover:bg-blue-600 text-white shadow-[0_0_20px_rgba(10,132,255,0.3)] hover:scale-[1.02] active:scale-95'
                                 : 'bg-white/10 text-gray-500 cursor-not-allowed'
                             }`}
                     >
-                        {showSuccess ? <><CheckCircle /> Vente Validée !</> : 'Valider la Vente'}
+                        {showSuccess ? <><CheckCircle className="animate-bounce" /> Vente Validée !</> : 'Valider la Vente'}
                     </button>
                 </div>
             </div>

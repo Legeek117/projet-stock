@@ -51,6 +51,33 @@ exports.createOrder = async (req, res) => {
     }
 };
 
+// Get all orders (Admin: all orders, User: only their orders)
+exports.getAllOrders = async (req, res) => {
+    try {
+        let query = `
+            SELECT o.*, u.username 
+            FROM orders o 
+            LEFT JOIN users u ON o.user_id = u.id
+        `;
+
+        let params = [];
+
+        // Si l'utilisateur n'est pas admin, filtrer par user_id
+        if (req.user.role !== 'admin') {
+            query += ' WHERE o.user_id = $1';
+            params.push(req.user.id);
+        }
+
+        query += ' ORDER BY o.created_at DESC';
+
+        const result = await pool.query(query, params);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
 exports.getOrders = async (req, res) => {
     try {
         const orders = await pool.query('SELECT * FROM orders WHERE user_id = $1 ORDER BY created_at DESC', [req.user.id]);
@@ -60,3 +87,4 @@ exports.getOrders = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+```
