@@ -1,31 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/productController');
+const categoryController = require('../controllers/categoryController');
 const auth = require('../middlewares/authMiddleware');
+const checkRole = require('../middlewares/roleMiddleware');
 
-// @route   GET api/products
-// @desc    Get all products
-// @access  Public (or Private)
-router.get('/', productController.getProducts);
+// Public routes
+router.get('/', productController.getAllProducts);
+router.get('/categories', categoryController.getAllCategories);
 
-// @route   GET api/products/:id
-// @desc    Get product by ID
-// @access  Public
-router.get('/:id', productController.getProductById);
-
-// @route   POST api/products
-// @desc    Create a product
-// @access  Private (Admin/Manager)
-router.post('/', auth, productController.createProduct);
-
-// @route   PUT api/products/:id
-// @desc    Update a product
-// @access  Private
-router.put('/:id', auth, productController.updateProduct);
-
-// @route   DELETE api/products/:id
-// @desc    Delete a product
-// @access  Private
-router.delete('/:id', auth, productController.deleteProduct);
+// Protected routes (Admin Only)
+router.post('/', auth, checkRole('admin'), productController.createProduct);
+router.put('/:id', auth, checkRole('admin'), productController.updateProduct);
+router.delete('/:id', auth, checkRole('admin'), productController.deleteProduct);
 
 module.exports = router;

@@ -54,7 +54,7 @@ export default function MySales() {
                                             {/* TODO: Afficher détails au survol ? */}
                                         </td>
                                         <td className="p-4 font-mono font-bold text-white">
-                                            {parseFloat(sale.total_amount).toFixed(2)} €
+                                            {parseFloat(sale.total_amount).toFixed(0)} FCFA
                                         </td>
                                         <td className="p-4">
                                             <span className={`px-2 py-1 rounded text-xs border ${sale.status === 'cancelled' ? 'border-red-500 text-red-400 bg-red-500/10' : 'border-green-500 text-green-400 bg-green-500/10'}`}>

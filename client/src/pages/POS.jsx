@@ -129,7 +129,7 @@ export default function POS() {
 
                             <div>
                                 <h3 className="font-bold text-white leading-tight mb-1 truncate">{product.name}</h3>
-                                <p className="text-ios-blue font-mono font-bold">{parseFloat(product.price).toFixed(2)} €</p>
+                                <p className="text-ios-blue font-mono font-bold">{parseFloat(product.price).toFixed(0)} FCFA</p>
                             </div>
                         </div>
                     ))}
@@ -157,7 +157,7 @@ export default function POS() {
                             <div key={item.id} className="flex justify-between items-center p-3 bg-white/5 rounded-xl group hover:bg-white/10 transition-colors">
                                 <div className="flex-1 min-w-0 mr-2">
                                     <p className="text-white font-medium truncate">{item.name}</p>
-                                    <p className="text-xs text-ios-gray">{parseFloat(item.price).toFixed(2)} € x {item.quantity}</p>
+                                    <p className="text-xs text-ios-gray">{parseFloat(item.price).toFixed(0)} FCFA x {item.quantity}</p>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <div className="flex items-center gap-1 bg-black/30 rounded-lg p-1">
@@ -177,11 +177,11 @@ export default function POS() {
                     <div className="space-y-3 mb-6">
                         <div className="flex justify-between text-ios-gray">
                             <span>Sous-total</span>
-                            <span>{totalAmount.toFixed(2)} €</span>
+                            <span>{totalAmount.toFixed(0)} FCFA</span>
                         </div>
                         <div className="flex justify-between text-white text-2xl font-bold">
                             <span>Total à payer</span>
-                            <span>{totalAmount.toFixed(2)} €</span>
+                            <span>{totalAmount.toFixed(0)} FCFA</span>
                         </div>
 
                         {/* Money Handling */}
@@ -189,19 +189,19 @@ export default function POS() {
                             <label className="text-xs uppercase text-ios-gray font-bold mb-2 block">Montant Reçu</label>
                             <div className="flex gap-2 mb-2">
                                 <div className="relative flex-1">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">€</span>
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">FCFA</span>
                                     <input
                                         type="number"
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 pl-8 text-white font-mono focus:ring-1 focus:ring-ios-blue outline-none"
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl py-3 pl-12 text-white font-mono focus:ring-1 focus:ring-ios-blue outline-none"
                                         value={amountReceived}
                                         onChange={e => setAmountReceived(e.target.value)}
-                                        placeholder="0.00"
+                                        placeholder="0"
                                     />
                                 </div>
                             </div>
                             {amountReceived && (
                                 <div className={`text-center p-2 rounded-xl font-bold ${changeDue >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                                    Rendu : {changeDue.toFixed(2)} €
+                                    Rendu : {changeDue.toFixed(0)} FCFA
                                 </div>
                             )}
                         </div>
@@ -211,10 +211,10 @@ export default function POS() {
                         onClick={handleValidateSale}
                         disabled={cart.length === 0 || loading || (amountReceived && changeDue < 0)}
                         className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all ${showSuccess
-                                ? 'bg-green-500 text-white'
-                                : cart.length > 0 && (!amountReceived || changeDue >= 0)
-                                    ? 'bg-ios-blue hover:bg-blue-600 text-white shadow-[0_0_20px_rgba(10,132,255,0.3)]'
-                                    : 'bg-white/10 text-gray-500 cursor-not-allowed'
+                            ? 'bg-green-500 text-white'
+                            : cart.length > 0 && (!amountReceived || changeDue >= 0)
+                                ? 'bg-ios-blue hover:bg-blue-600 text-white shadow-[0_0_20px_rgba(10,132,255,0.3)]'
+                                : 'bg-white/10 text-gray-500 cursor-not-allowed'
                             }`}
                     >
                         {showSuccess ? <><CheckCircle /> Vente Validée !</> : 'Valider la Vente'}

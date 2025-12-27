@@ -26,13 +26,13 @@ export default function AdminDashboard() {
     const cards = [
         {
             title: "Chiffre d'Affaires",
-            value: `${parseFloat(stats.totalRevenue).toLocaleString()} €`,
+            value: `${parseFloat(stats.totalRevenue).toLocaleString()} FCFA`,
             icon: <DollarSign size={28} className="text-green-400" />,
             bg: "bg-green-500/10", border: "border-green-500/20"
         },
         {
             title: "Ventes du Jour",
-            value: `${stats.salesToday.count} (${parseFloat(stats.salesToday.total).toLocaleString()} €)`,
+            value: `${stats.salesToday.count} (${parseFloat(stats.salesToday.total).toLocaleString()} FCFA)`,
             icon: <TrendingUp size={28} className="text-blue-400" />,
             bg: "bg-blue-500/10", border: "border-blue-500/20"
         },
@@ -85,7 +85,7 @@ export default function AdminDashboard() {
                                 <div key={i} className="flex flex-col items-center gap-2 flex-1 group">
                                     <div className="w-full bg-blue-500/20 rounded-t-lg relative group-hover:bg-blue-500 transition-colors" style={{ height: `${height}%` }}>
                                         <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                            {day.total}€
+                                            {day.total} FCFA
                                         </div>
                                     </div>
                                     <div className="text-xs text-ios-gray rotate-45 mt-2 origin-left">{new Date(day.date).toLocaleDateString(undefined, { weekday: 'short' })}</div>
