@@ -44,12 +44,3 @@ INSERT INTO categories (name) VALUES
 ('Informatique'), ('Téléphonie'), ('Accessoires')
 ON CONFLICT (name) DO NOTHING;
 
--- 8. Créer une table pour tracker les migrations
-CREATE TABLE IF NOT EXISTS migrations (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) UNIQUE NOT NULL,
-    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 9. Enregistrer cette migration
-INSERT INTO migrations (name) VALUES ('001_add_variants') ON CONFLICT DO NOTHING;
