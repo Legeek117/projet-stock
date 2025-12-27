@@ -55,7 +55,21 @@ exports.createOrder = async (req, res) => {
 exports.getAllOrders = async (req, res) => {
     try {
         let query = `
-            SELECT o.*, u.username 
+            SELECT 
+                o.*,
+                u.username,
+                (
+                    SELECT json_agg(
+                        json_build_object(
+                            'product_name', p.name,
+                            'quantity', oi.quantity,
+                            'unit_price', oi.unit_price
+                        )
+                    )
+                    FROM order_items oi
+                    LEFT JOIN products p ON oi.product_id = p.id
+                    WHERE oi.order_id = o.id
+                ) as items
             FROM orders o 
             LEFT JOIN users u ON o.user_id = u.id
         `;
@@ -87,4 +101,3 @@ exports.getOrders = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
-```

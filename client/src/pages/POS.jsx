@@ -136,7 +136,7 @@ export default function POS() {
 
                             <div className="flex justify-between items-start">
                                 <span className="text-xs font-bold text-ios-gray uppercase tracking-wider bg-black/20 px-2 py-1 rounded inline-block">
-                                    {product.category || 'Divers'}
+                                    {product.category_name || 'Sans catégorie'}
                                 </span>
                                 <div className={`w-3 h-3 rounded-full ${product.stock_quantity < 5 ? 'bg-red-500 animate-pulse' : product.stock_quantity < 10 ? 'bg-orange-500' : 'bg-green-500'}`}></div>
                             </div>

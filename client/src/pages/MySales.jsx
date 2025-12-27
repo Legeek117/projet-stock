@@ -51,8 +51,17 @@ export default function MySales() {
                                             </div>
                                         </td>
                                         <td className="p-4 text-gray-300">
-                                            {sale.item_count} produits
-                                            {/* TODO: Afficher détails au survol ? */}
+                                            {sale.items && sale.items.length > 0 ? (
+                                                <div className="flex flex-col gap-1">
+                                                    {sale.items.map((item, idx) => (
+                                                        <span key={idx} className="text-xs">
+                                                            {item.product_name} <span className="text-ios-gray">x{item.quantity}</span>
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <span className="text-xs text-ios-gray">{sale.item_count || 0} article(s)</span>
+                                            )}
                                         </td>
                                         <td className="p-4 font-mono font-bold text-white">
                                             {parseFloat(sale.total_amount).toFixed(0)} FCFA

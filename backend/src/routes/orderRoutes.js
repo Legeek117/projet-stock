@@ -9,8 +9,8 @@ const auth = require('../middlewares/authMiddleware');
 router.post('/', auth, orderController.createOrder);
 
 // @route   GET api/orders
-// @desc    Get user orders
+// @desc    Get orders (filtered by role)
 // @access  Private
-router.get('/', auth, orderController.getOrders);
+router.get('/', auth, orderController.getAllOrders);
 
 module.exports = router;
