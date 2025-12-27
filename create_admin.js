@@ -1,4 +1,4 @@
-const fetch = require('node-fetch'); // Ou native fetch si Node 18+
+// Script compatible Node 18+ (Fetch natif)
 
 // URL de votre Backend
 const API_URL = 'http://development-moved-favour-cup.trycloudflare.com:8080/projet-stock/api/auth/register';
