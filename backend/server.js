@@ -16,6 +16,7 @@ app.use('/api/auth', require('./src/routes/authRoutes'));
 app.use('/api/products', require('./src/routes/productRoutes'));
 app.use('/api/orders', require('./src/routes/orderRoutes'));
 app.use('/api/stock', require('./src/routes/stockRoutes'));
+app.use('/api/purchases', require('./src/routes/purchaseRoutes'));
 app.use('/api', require('./src/routes/adminRoutes'));
 
 // Basic Route

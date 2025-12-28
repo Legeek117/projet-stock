@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutGrid, Package, ShoppingCart, LogOut, Users, Settings, PlusCircle, History } from 'lucide-react';
+import { LayoutGrid, Package, ShoppingCart, LogOut, Users, Settings, PlusCircle, History, Truck, ClipboardList } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function Layout() {
@@ -26,7 +26,10 @@ export default function Layout() {
         { to: '/products', icon: Package, label: 'Produits' },
         { to: '/stock', icon: History, label: 'Stock' },
         { to: '/orders', icon: ShoppingCart, label: 'Ventes' },
-        { to: '/users', icon: Users, label: 'Équipe' },
+        { to: '/purchases', icon: Truck, label: 'Achats' },
+        { to: '/suppliers', icon: Users, label: 'Fournisseurs' },
+        { to: '/inventory', icon: ClipboardList, label: 'Inventaire' },
+        { to: '/settings', icon: Settings, label: 'Réglages' },
     ];
 
     const userNavItems = [
@@ -92,14 +95,14 @@ export default function Layout() {
             {/* Mobile Bottom Navigation (hidden on desktop) */}
             <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1C1C1E]/95 backdrop-blur-xl border-t border-white/10">
                 <div className={`grid ${isAdmin ? 'grid-cols-5' : 'grid-cols-3'} gap-1 p-2`}>
-                    {navItems.map((item) => (
+                    {(isAdmin ? adminNavItems.slice(0, 5) : userNavItems).map((item) => (
                         <NavLink
                             key={item.to}
                             to={item.to}
                             className={navItemClass}
                         >
                             <item.icon size={22} strokeWidth={2.5} />
-                            <span className="text-xs font-medium mt-0.5">{item.label}</span>
+                            <span className="text-[10px] font-medium mt-0.5 truncate">{item.label}</span>
                         </NavLink>
                     ))}
                 </div>

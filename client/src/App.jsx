@@ -10,6 +10,10 @@ import UsersPage from './pages/Users';
 import POS from './pages/POS';
 import MySales from './pages/MySales';
 import StockMovements from './pages/StockMovements';
+import Suppliers from './pages/Suppliers';
+import Purchases from './pages/Purchases';
+import Inventory from './pages/Inventory';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -28,6 +32,10 @@ function App() {
               <Route path="/pos" element={<POS />} />
               <Route path="/my-sales" element={<MySales />} />
               <Route path="/stock" element={<StockMovements />} />
+              <Route path="/purchases" element={<Purchases />} />
+              <Route path="/suppliers" element={<Suppliers />} />
+              <Route path="/inventory" element={<Inventory />} />
+              <Route path="/settings" element={<Settings />} />
             </Route>
           </Route>
 
