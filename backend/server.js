@@ -20,7 +20,11 @@ app.use('/api/purchases', require('./src/routes/purchaseRoutes'));
 app.use('/api/settings', require('./src/routes/settingsRoutes'));
 app.use('/api', require('./src/routes/adminRoutes'));
 
-// Basic Route
+// Basic Routes
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', message: 'OptiStock API is running', version: '1.2.0' });
+});
+
 app.get('/', (req, res) => {
     res.json({ message: 'Welcome to the Stock Management API' });
 });
