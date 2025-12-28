@@ -56,7 +56,7 @@ export default function UserDashboard() {
                         <span className="text-xl text-ios-gray">ventes</span>
                     </div>
                     <div className="mt-4 text-2xl font-mono text-white/50">
-                        {parseFloat(stats.salesWeek.total || 0).toLocaleString()} €
+                        {parseFloat(stats.salesWeek.total || 0).toLocaleString()} FCFA
                     </div>
                 </div>
             </div>

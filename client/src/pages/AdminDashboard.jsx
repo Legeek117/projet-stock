@@ -1,24 +1,72 @@
 import { useState, useEffect } from 'react';
 import { api } from '../services/api';
-import { Package, DollarSign, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Package, DollarSign, TrendingUp, AlertTriangle, BarChart3, LineChart } from 'lucide-react';
+import SalesChart from '../components/analytics/SalesChart';
+import TopProductsWidget from '../components/analytics/TopProductsWidget';
+import CategoryAnalysis from '../components/analytics/CategoryAnalysis';
+import ComparisonCards from '../components/analytics/ComparisonCards';
+import ExportButton from '../components/analytics/ExportButton';
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    // Analytics data
+    const [salesChartData, setSalesChartData] = useState([]);
+    const [topProducts, setTopProducts] = useState([]);
+    const [categoryData, setCategoryData] = useState([]);
+    const [comparisons, setComparisons] = useState(null);
+    const [analyticsLoading, setAnalyticsLoading] = useState(true);
+
+    // UI state
+    const [chartPeriod, setChartPeriod] = useState(7);
+    const [chartType, setChartType] = useState('line');
+
     useEffect(() => {
-        async function fetchStats() {
-            try {
-                const data = await api('/stats/admin');
-                setStats(data);
-            } catch (error) {
-                console.error("Erreur stats admin", error);
-            } finally {
-                setLoading(false);
-            }
-        }
         fetchStats();
+        fetchAnalytics();
     }, []);
+
+    useEffect(() => {
+        fetchSalesChart();
+    }, [chartPeriod]);
+
+    const fetchStats = async () => {
+        try {
+            const data = await api('/stats/admin');
+            setStats(data);
+        } catch (error) {
+            console.error("Erreur stats admin", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchSalesChart = async () => {
+        try {
+            const data = await api(`/stats/sales-chart?period=${chartPeriod}`);
+            setSalesChartData(data);
+        } catch (error) {
+            console.error("Erreur graphique ventes", error);
+        }
+    };
+
+    const fetchAnalytics = async () => {
+        try {
+            const [products, categories, comp] = await Promise.all([
+                api('/stats/top-products?limit=5'),
+                api('/stats/by-category'),
+                api('/stats/comparisons')
+            ]);
+            setTopProducts(products);
+            setCategoryData(categories);
+            setComparisons(comp);
+        } catch (error) {
+            console.error("Erreur analytics", error);
+        } finally {
+            setAnalyticsLoading(false);
+        }
+    };
 
     if (loading) return <div className="p-10 text-white">Chargement des statistiques...</div>;
     if (!stats) return <div className="p-10 text-red-400">Impossible de charger les statistiques.</div>;
@@ -26,13 +74,14 @@ export default function AdminDashboard() {
     const cards = [
         {
             title: "Chiffre d'Affaires",
-            value: `${parseFloat(stats.totalRevenue).toLocaleString()} FCFA`,
+            value: `${parseFloat(stats.totalRevenue).toFixed(0)} FCFA`,
             icon: <DollarSign size={28} className="text-green-400" />,
             bg: "bg-green-500/10", border: "border-green-500/20"
         },
         {
             title: "Ventes du Jour",
-            value: `${stats.salesToday.count} (${parseFloat(stats.salesToday.total).toLocaleString()} FCFA)`,
+            value: `${stats.salesToday.count}`,
+            subtitle: `${parseFloat(stats.salesToday.total).toFixed(0)} FCFA`,
             icon: <TrendingUp size={28} className="text-blue-400" />,
             bg: "bg-blue-500/10", border: "border-blue-500/20"
         },
@@ -53,11 +102,15 @@ export default function AdminDashboard() {
 
     return (
         <div className="space-y-6 md:space-y-8">
-            <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-white">Vue d'overview Admin</h2>
-                <p className="text-ios-gray mt-1 text-sm">Pilotage de l'activité commerciale</p>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 className="text-2xl md:text-3xl font-bold text-white">Dashboard Admin</h2>
+                    <p className="text-ios-gray mt-1 text-sm">Pilotage de l'activité commerciale</p>
+                </div>
+                <ExportButton data={salesChartData} type="sales" period={`${chartPeriod}j`} />
             </div>
 
+            {/* KPI Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 {cards.map((card, i) => (
                     <div key={i} className={`glass-panel p-6 rounded-3xl border ${card.border} hover:scale-[1.02] transition-transform`}>
@@ -69,38 +122,67 @@ export default function AdminDashboard() {
                         </div>
                         <h3 className="text-ios-gray text-sm font-medium uppercase tracking-wide">{card.title}</h3>
                         <p className="text-3xl font-bold text-white mt-2">{card.value}</p>
+                        {card.subtitle && <p className="text-sm text-ios-gray mt-1">{card.subtitle}</p>}
                     </div>
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-                {/* Chart Placeholder (Simple Bar Visualisation) */}
-                <div className="glass-panel p-6 md:p-8 rounded-2xl md:rounded-[32px]">
-                    <h3 className="text-lg md:text-xl font-bold text-white mb-4 md:mb-6">Ventes des 7 derniers jours</h3>
-                    <div className="h-48 md:h-64 flex items-end justify-between gap-2">
-                        {stats.salesChart.length > 0 ? stats.salesChart.map((day, i) => {
-                            const maxVal = Math.max(...stats.salesChart.map(s => parseFloat(s.total) || 0), 100);
-                            const height = (parseFloat(day.total) / maxVal) * 100;
-                            return (
-                                <div key={i} className="flex flex-col items-center gap-2 flex-1 group">
-                                    <div className="w-full bg-blue-500/20 rounded-t-lg relative group-hover:bg-blue-500 transition-colors" style={{ height: `${height}%` }}>
-                                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                            {day.total} FCFA
-                                        </div>
-                                    </div>
-                                    <div className="text-xs text-ios-gray rotate-45 mt-2 origin-left">{new Date(day.date).toLocaleDateString(undefined, { weekday: 'short' })}</div>
-                                </div>
-                            );
-                        }) : <div className="text-ios-gray w-full text-center self-center">Pas assez de données</div>}
-                    </div>
-                </div>
+            {/* Comparisons */}
+            <ComparisonCards data={comparisons} loading={analyticsLoading} />
 
-                <div className="glass-panel p-8 rounded-[32px] flex items-center justify-center border-dashed border-2 border-white/10">
-                    <div className="text-center">
-                        <p className="text-ios-gray mb-4">Espace pour Top Produits / Meilleurs Vendeurs</p>
-                        <button className="text-ios-blue text-sm hover:underline">Configurer le widget</button>
+            {/* Sales Chart */}
+            <div className="glass-panel p-6 rounded-3xl">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <div>
+                        <h3 className="text-xl font-bold text-white">Évolution des Ventes</h3>
+                        <p className="text-ios-gray text-sm mt-1">Analyse détaillée</p>
+                    </div>
+                    <div className="flex gap-2">
+                        {/* Period selector */}
+                        <div className="flex gap-1 bg-white/5 p-1 rounded-xl">
+                            {[7, 14, 30].map(period => (
+                                <button
+                                    key={period}
+                                    onClick={() => setChartPeriod(period)}
+                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${chartPeriod === period
+                                            ? 'bg-ios-blue text-white'
+                                            : 'text-ios-gray hover:text-white'
+                                        }`}
+                                >
+                                    {period}j
+                                </button>
+                            ))}
+                        </div>
+                        {/* Chart type selector */}
+                        <div className="flex gap-1 bg-white/5 p-1 rounded-xl">
+                            <button
+                                onClick={() => setChartType('line')}
+                                className={`p-2 rounded-lg transition-all ${chartType === 'line'
+                                        ? 'bg-ios-blue text-white'
+                                        : 'text-ios-gray hover:text-white'
+                                    }`}
+                            >
+                                <LineChart size={18} />
+                            </button>
+                            <button
+                                onClick={() => setChartType('bar')}
+                                className={`p-2 rounded-lg transition-all ${chartType === 'bar'
+                                        ? 'bg-ios-blue text-white'
+                                        : 'text-ios-gray hover:text-white'
+                                    }`}
+                            >
+                                <BarChart3 size={18} />
+                            </button>
+                        </div>
                     </div>
                 </div>
+                <SalesChart data={salesChartData} period={chartPeriod} type={chartType} />
+            </div>
+
+            {/* Top Products & Category Analysis */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <TopProductsWidget products={topProducts} loading={analyticsLoading} />
+                <CategoryAnalysis data={categoryData} loading={analyticsLoading} />
             </div>
         </div>
     );

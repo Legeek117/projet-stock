@@ -40,7 +40,7 @@ export default function Layout() {
             {/* Desktop Sidebar (hidden on mobile) */}
             <aside className="hidden md:flex w-80 p-6 flex-col border-r border-white/5 bg-[#1C1C1E]/30 backdrop-blur-xl">
                 <div className="mb-10 px-4">
-                    <h1 className="text-2xl font-bold text-white tracking-wide">Stock OS</h1>
+                    <h1 className="text-2xl font-bold text-white tracking-wide">OptiStock</h1>
                     <p className="text-xs text-ios-gray mt-1 uppercase tracking-wider">
                         {isAdmin ? 'Administrateur' : 'Vendeur'} • {user?.username}
                     </p>
@@ -70,7 +70,7 @@ export default function Layout() {
                 <div className="md:hidden sticky top-0 z-40 bg-[#1C1C1E]/95 backdrop-blur-xl border-b border-white/10 p-4">
                     <div className="flex justify-between items-center">
                         <div>
-                            <h1 className="text-lg font-bold text-white">Stock OS</h1>
+                            <h1 className="text-lg font-bold text-white">OptiStock</h1>
                             <p className="text-xs text-ios-gray">{user?.username}</p>
                         </div>
                         <button
@@ -96,8 +96,8 @@ export default function Layout() {
                             to={item.to}
                             className={navItemClass}
                         >
-                            <item.icon size={22} />
-                            <span className="text-xs font-medium">{item.label}</span>
+                            <item.icon size={22} strokeWidth={2.5} />
+                            <span className="text-xs font-medium mt-0.5">{item.label}</span>
                         </NavLink>
                     ))}
                 </div>
