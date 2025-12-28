@@ -9,7 +9,7 @@ export default {
             colors: {
                 'ios-bg': '#000000',      // Fond noir absolu
                 'ios-card': '#1C1C1E',    // Gris foncé (cartes iOS)
-                'ios-blue': '#0A84FF',    // Bleu système iOS (Dark Mode)
+                'ios-blue': 'var(--primary-color, #0A84FF)',    // Bleu système iOS (Dynamique)
                 'ios-gray': '#8E8E93',    // Gris secondaire
                 'ios-divider': '#38383A', // Séparateurs
                 'glass-bg': 'rgba(28, 28, 30, 0.6)', // Fond pour glassmorphism
