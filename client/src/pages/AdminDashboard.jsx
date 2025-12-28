@@ -44,7 +44,7 @@ export default function AdminDashboard() {
 
     const fetchSalesChart = async () => {
         try {
-            const data = await api(`/stats/sales-chart?period=${chartPeriod}`);
+            const data = await api(`/admin/stats/sales-chart?period=${chartPeriod}`);
             setSalesChartData(data);
         } catch (error) {
             console.error("Erreur graphique ventes", error);
@@ -54,9 +54,9 @@ export default function AdminDashboard() {
     const fetchAnalytics = async () => {
         try {
             const [products, categories, comp] = await Promise.all([
-                api('/stats/top-products?limit=5'),
-                api('/stats/by-category'),
-                api('/stats/comparisons')
+                api('/admin/stats/top-products?limit=5'),
+                api('/admin/stats/by-category'),
+                api('/admin/stats/comparisons')
             ]);
             setTopProducts(products);
             setCategoryData(categories);
@@ -145,8 +145,8 @@ export default function AdminDashboard() {
                                     key={period}
                                     onClick={() => setChartPeriod(period)}
                                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${chartPeriod === period
-                                            ? 'bg-ios-blue text-white'
-                                            : 'text-ios-gray hover:text-white'
+                                        ? 'bg-ios-blue text-white'
+                                        : 'text-ios-gray hover:text-white'
                                         }`}
                                 >
                                     {period}j
@@ -158,8 +158,8 @@ export default function AdminDashboard() {
                             <button
                                 onClick={() => setChartType('line')}
                                 className={`p-2 rounded-lg transition-all ${chartType === 'line'
-                                        ? 'bg-ios-blue text-white'
-                                        : 'text-ios-gray hover:text-white'
+                                    ? 'bg-ios-blue text-white'
+                                    : 'text-ios-gray hover:text-white'
                                     }`}
                             >
                                 <LineChart size={18} />
@@ -167,8 +167,8 @@ export default function AdminDashboard() {
                             <button
                                 onClick={() => setChartType('bar')}
                                 className={`p-2 rounded-lg transition-all ${chartType === 'bar'
-                                        ? 'bg-ios-blue text-white'
-                                        : 'text-ios-gray hover:text-white'
+                                    ? 'bg-ios-blue text-white'
+                                    : 'text-ios-gray hover:text-white'
                                     }`}
                             >
                                 <BarChart3 size={18} />

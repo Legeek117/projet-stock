@@ -5,7 +5,7 @@ import { fr } from 'date-fns/locale';
 export default function SalesChart({ data, period = 7, type = 'line' }) {
     if (!data || data.length === 0) {
         return (
-            <div className="glass-panel p-8 rounded-3xl flex items-center justify-center h-[300px]">
+            <div className="flex items-center justify-center h-[300px]">
                 <p className="text-ios-gray">Aucune donnée disponible</p>
             </div>
         );
