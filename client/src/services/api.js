@@ -25,8 +25,9 @@ export const api = async (endpoint, options = {}) => {
     if (response.status === 204) return null;
 
     try {
+        if (!response.ok) return null;
         return await response.json();
     } catch (err) {
-        return response; // Cas où ce n'est pas du JSON
+        return null; // Évite de renvoyer l'objet Response qui est truthy
     }
 };

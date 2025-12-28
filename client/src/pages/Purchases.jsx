@@ -27,11 +27,14 @@ export default function Purchases() {
                 api('/purchases/suppliers'),
                 api('/purchases')
             ]);
-            setProducts(productsData);
-            setSuppliers(suppliersData);
-            setHistory(historyData);
+            setProducts(Array.isArray(productsData) ? productsData : []);
+            setSuppliers(Array.isArray(suppliersData) ? suppliersData : []);
+            setHistory(Array.isArray(historyData) ? historyData : []);
         } catch (err) {
             console.error(err);
+            setProducts([]);
+            setSuppliers([]);
+            setHistory([]);
         } finally {
             setLoading(false);
         }
@@ -300,10 +303,10 @@ export default function Purchases() {
                         onClick={handleSubmit}
                         disabled={submitting || cart.length === 0 || !selectedSupplier}
                         className={`w-full py-5 rounded-2xl font-black flex items-center justify-center gap-3 transition-all duration-300 transform active:scale-95 shadow-xl ${orderSuccess
-                                ? 'bg-green-500 text-white scale-100'
-                                : submitting
-                                    ? 'bg-ios-blue/50 cursor-not-allowed text-white'
-                                    : 'bg-ios-blue text-white hover:bg-blue-600 hover:shadow-ios-blue/20'
+                            ? 'bg-green-500 text-white scale-100'
+                            : submitting
+                                ? 'bg-ios-blue/50 cursor-not-allowed text-white'
+                                : 'bg-ios-blue text-white hover:bg-blue-600 hover:shadow-ios-blue/20'
                             } disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed`}
                     >
                         {orderSuccess ? (

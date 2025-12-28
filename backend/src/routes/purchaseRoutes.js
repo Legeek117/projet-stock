@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const purchaseController = require('../controllers/purchaseController');
-const { auth, checkRole } = require('../middleware/auth');
+const auth = require('../middlewares/authMiddleware');
+const checkRole = require('../middlewares/roleMiddleware');
 
 // Toutes les routes d'achat nécessitent d'être connecté
 router.use(auth);

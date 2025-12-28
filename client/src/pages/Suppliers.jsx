@@ -16,9 +16,10 @@ export default function Suppliers() {
     const fetchSuppliers = async () => {
         try {
             const data = await api('/purchases/suppliers');
-            setSuppliers(data);
+            setSuppliers(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error(err);
+            setSuppliers([]);
         } finally {
             setLoading(false);
         }
@@ -39,7 +40,7 @@ export default function Suppliers() {
         }
     };
 
-    const filteredSuppliers = suppliers.filter(s =>
+    const filteredSuppliers = (Array.isArray(suppliers) ? suppliers : []).filter(s =>
         s.name.toLowerCase().includes(search.toLowerCase()) ||
         s.email?.toLowerCase().includes(search.toLowerCase())
     );

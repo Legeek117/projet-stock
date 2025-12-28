@@ -18,9 +18,10 @@ export default function StockMovements() {
         try {
             setLoading(true);
             const data = await api('/stock/movements?limit=100');
-            setMovements(data);
+            setMovements(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Erreur mouvements stock", error);
+            setMovements([]);
         } finally {
             setLoading(false);
         }
@@ -39,8 +40,8 @@ export default function StockMovements() {
         }
     };
 
-    const filteredMovements = movements.filter(m => {
-        const matchesSearch = m.product_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const filteredMovements = (Array.isArray(movements) ? movements : []).filter(m => {
+        const matchesSearch = (m.product_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
             (m.reason && m.reason.toLowerCase().includes(searchTerm.toLowerCase()));
         const matchesType = typeFilter === 'all' || m.type === typeFilter;
         return matchesSearch && matchesType;
@@ -86,8 +87,8 @@ export default function StockMovements() {
                             key={filter.id}
                             onClick={() => setTypeFilter(filter.id)}
                             className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${typeFilter === filter.id
-                                    ? 'bg-ios-blue text-white shadow-lg shadow-ios-blue/20'
-                                    : 'bg-white/5 text-ios-gray hover:text-white'
+                                ? 'bg-ios-blue text-white shadow-lg shadow-ios-blue/20'
+                                : 'bg-white/5 text-ios-gray hover:text-white'
                                 }`}
                         >
                             {filter.label}
@@ -148,8 +149,8 @@ export default function StockMovements() {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-center">
                                                 <div className={`font-bold text-sm ${movement.type.includes('in') || movement.type === 'return'
-                                                        ? 'text-green-400'
-                                                        : 'text-red-400'
+                                                    ? 'text-green-400'
+                                                    : 'text-red-400'
                                                     }`}>
                                                     {movement.type.includes('in') || movement.type === 'return' ? '+' : '-'}{movement.quantity}
                                                 </div>

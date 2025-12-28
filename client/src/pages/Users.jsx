@@ -17,9 +17,10 @@ export default function UsersPage() {
     const fetchUsers = async () => {
         try {
             const data = await api('/users');
-            setUsers(data);
+            setUsers(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Erreur users", error);
+            setUsers([]);
         } finally {
             setLoading(false);
         }
@@ -76,12 +77,12 @@ export default function UsersPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {users.map(u => (
+                            {(Array.isArray(users) ? users : []).map(u => (
                                 <tr key={u.id} className="hover:bg-white/5 transition-colors group">
                                     <td className="p-6">
                                         <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                                                {u.username.charAt(0).toUpperCase()}
+                                                {u.username?.charAt(0).toUpperCase()}
                                             </div>
                                             <span className="font-medium text-white">{u.username}</span>
                                         </div>
@@ -96,7 +97,7 @@ export default function UsersPage() {
                                     </td>
                                     <td className="p-6 text-sm text-ios-gray">
                                         <div className="flex items-center gap-2">
-                                            <Calendar size={14} /> {new Date(u.created_at).toLocaleDateString()}
+                                            <Calendar size={14} /> {u.created_at ? new Date(u.created_at).toLocaleDateString() : 'N/A'}
                                         </div>
                                     </td>
                                     <td className="p-6 text-right">

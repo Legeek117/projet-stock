@@ -15,6 +15,7 @@ export default function AdminDashboard() {
     const [salesChartData, setSalesChartData] = useState([]);
     const [topProducts, setTopProducts] = useState([]);
     const [categoryData, setCategoryData] = useState([]);
+    const [lowStockProducts, setLowStockProducts] = useState([]);
     const [comparisons, setComparisons] = useState(null);
     const [analyticsLoading, setAnalyticsLoading] = useState(true);
 
@@ -45,22 +46,25 @@ export default function AdminDashboard() {
     const fetchSalesChart = async () => {
         try {
             const data = await api(`/stats/sales-chart?period=${chartPeriod}`);
-            setSalesChartData(data);
+            setSalesChartData(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error("Erreur graphique ventes", error);
+            setSalesChartData([]);
         }
     };
 
     const fetchAnalytics = async () => {
         try {
-            const [products, categories, comp] = await Promise.all([
+            const [products, categories, comp, lowStock] = await Promise.all([
                 api('/stats/top-products?limit=5'),
                 api('/stats/by-category'),
-                api('/stats/comparisons')
+                api('/stats/comparisons'),
+                api('/products?lowStack=true') // On réutilise l'API products avec un filtre
             ]);
-            setTopProducts(products);
-            setCategoryData(categories);
+            setTopProducts(Array.isArray(products) ? products : []);
+            setCategoryData(Array.isArray(categories) ? categories : []);
             setComparisons(comp);
+            setLowStockProducts(Array.isArray(lowStock) ? lowStock.filter(p => p.stock_quantity < 5) : []);
         } catch (error) {
             console.error("Erreur analytics", error);
         } finally {
@@ -74,14 +78,14 @@ export default function AdminDashboard() {
     const cards = [
         {
             title: "Chiffre d'Affaires",
-            value: `${parseFloat(stats.totalRevenue).toFixed(0)} FCFA`,
+            value: `${parseFloat(stats?.totalRevenue || 0).toFixed(0)} FCFA`,
             icon: <DollarSign size={28} className="text-green-400" />,
             bg: "bg-green-500/10", border: "border-green-500/20"
         },
         {
             title: "Ventes du Jour",
-            value: `${stats.salesToday.count}`,
-            subtitle: `${parseFloat(stats.salesToday.total).toFixed(0)} FCFA`,
+            value: `${stats?.salesToday?.count || 0}`,
+            subtitle: `${parseFloat(stats?.salesToday?.total || 0).toFixed(0)} FCFA`,
             icon: <TrendingUp size={28} className="text-blue-400" />,
             bg: "bg-blue-500/10", border: "border-blue-500/20"
         },
@@ -195,8 +199,8 @@ export default function AdminDashboard() {
                     </div>
 
                     <div className="space-y-3 flex-1">
-                        {products.filter(p => p.stock_quantity < 5).length > 0 ? (
-                            products.filter(p => p.stock_quantity < 5).slice(0, 5).map(product => (
+                        {(Array.isArray(lowStockProducts) ? lowStockProducts : []).length > 0 ? (
+                            lowStockProducts.slice(0, 5).map(product => (
                                 <div key={product.id} className="flex justify-between items-center p-3 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
                                     <div className="flex items-center gap-3">
                                         <div className="w-2 h-8 bg-red-500/20 rounded-full overflow-hidden">

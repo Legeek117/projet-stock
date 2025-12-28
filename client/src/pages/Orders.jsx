@@ -19,9 +19,10 @@ export default function Orders() {
     const fetchOrders = async () => {
         try {
             const data = await api('/orders');
-            setOrders(data);
+            setOrders(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error(err);
+            setOrders([]);
         } finally {
             setLoading(false);
         }
@@ -30,8 +31,11 @@ export default function Orders() {
     const fetchProducts = async () => {
         try {
             const data = await api('/products');
-            setProducts(data);
-        } catch (err) { console.error(err); }
+            setProducts(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error(err);
+            setProducts([]);
+        }
     };
 
     const addToCart = (product) => {
@@ -140,7 +144,7 @@ export default function Orders() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {orders.map(order => (
+                            {(Array.isArray(orders) ? orders : []).map(order => (
                                 <tr key={order.id} className="hover:bg-white/5 transition-colors">
                                     <td className="p-4 md:p-6 text-xs md:text-sm">{new Date(order.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
                                     {user?.role === 'admin' && (

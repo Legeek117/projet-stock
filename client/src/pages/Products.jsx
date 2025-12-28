@@ -21,9 +21,10 @@ export default function Products() {
     const fetchProducts = async () => {
         try {
             const data = await api('/products');
-            setProducts(data);
+            setProducts(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error(err);
+            setProducts([]);
         } finally {
             setLoading(false);
         }
@@ -56,7 +57,7 @@ export default function Products() {
         setIsModalOpen(true);
     };
 
-    const filteredProducts = products.filter(p =>
+    const filteredProducts = (Array.isArray(products) ? products : []).filter(p =>
         p.name.toLowerCase().includes(search.toLowerCase()) ||
         p.category_name?.toLowerCase().includes(search.toLowerCase())
     );

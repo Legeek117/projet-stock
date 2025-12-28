@@ -52,11 +52,11 @@ export default function UserDashboard() {
                 <div className="glass-panel p-8 rounded-[32px]">
                     <h3 className="text-ios-gray font-medium uppercase tracking-wider text-sm mb-2">Cette Semaine</h3>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-5xl font-bold text-white">{stats.salesWeek.count}</span>
+                        <span className="text-5xl font-bold text-white">{stats?.salesWeek?.count || 0}</span>
                         <span className="text-xl text-ios-gray">ventes</span>
                     </div>
                     <div className="mt-4 text-2xl font-mono text-white/50">
-                        {parseFloat(stats.salesWeek.total || 0).toLocaleString()} FCFA
+                        {parseFloat(stats?.salesWeek?.total || 0).toLocaleString()} FCFA
                     </div>
                 </div>
             </div>

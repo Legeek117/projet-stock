@@ -16,13 +16,17 @@ export default function Inventory() {
     const fetchProducts = async () => {
         try {
             const data = await api('/products');
-            setProducts(data);
-            // Initialiser l'inventaire avec les stocks actuels
-            const initialInv = {};
-            data.forEach(p => initialInv[p.id] = p.stock_quantity);
-            setInventory(initialInv);
+            if (Array.isArray(data)) {
+                setProducts(data);
+                const initialInv = {};
+                data.forEach(p => initialInv[p.id] = p.stock_quantity);
+                setInventory(initialInv);
+            } else {
+                setProducts([]);
+            }
         } catch (err) {
             console.error(err);
+            setProducts([]);
         } finally {
             setLoading(false);
         }
@@ -111,8 +115,8 @@ export default function Inventory() {
                                         <td colSpan="4" className="p-8"><div className="h-4 bg-white/5 rounded w-1/2 mx-auto"></div></td>
                                     </tr>
                                 ))
-                            ) : products.map(product => {
-                                const diff = inventory[product.id] - product.stock_quantity;
+                            ) : (Array.isArray(products) ? products : []).map(product => {
+                                const diff = (inventory[product.id] || 0) - product.stock_quantity;
                                 return (
                                     <tr key={product.id} className="hover:bg-white/[0.02] transition-colors group">
                                         <td className="p-6">
