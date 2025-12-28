@@ -20,9 +20,11 @@ export default function Layout() {
     const isAdmin = user?.role === 'admin';
 
     // Navigation items basés sur le rôle
+    // Navigation items basés sur le rôle
     const adminNavItems = [
         { to: '/', icon: LayoutGrid, label: 'Dashboard' },
         { to: '/products', icon: Package, label: 'Produits' },
+        { to: '/stock', icon: History, label: 'Stock' },
         { to: '/orders', icon: ShoppingCart, label: 'Ventes' },
         { to: '/users', icon: Users, label: 'Équipe' },
     ];
@@ -89,7 +91,7 @@ export default function Layout() {
 
             {/* Mobile Bottom Navigation (hidden on desktop) */}
             <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1C1C1E]/95 backdrop-blur-xl border-t border-white/10">
-                <div className="grid grid-cols-4 gap-1 p-2">
+                <div className={`grid ${isAdmin ? 'grid-cols-5' : 'grid-cols-3'} gap-1 p-2`}>
                     {navItems.map((item) => (
                         <NavLink
                             key={item.to}

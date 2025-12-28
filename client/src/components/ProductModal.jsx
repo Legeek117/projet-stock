@@ -10,6 +10,7 @@ export default function ProductModal({ product, onClose, onSave }) {
         price: product?.price || '',
         category_name: product?.category_name || '',
         stock_quantity: product?.stock_quantity || 0, // Stock simple si pas de variantes
+        reason: '',
     });
 
     const [categoryMode, setCategoryMode] = useState('select'); // 'select' ou 'custom'
@@ -60,6 +61,7 @@ export default function ProductModal({ product, onClose, onSave }) {
             category_name: finalCategoryName,
             variants: variants.length > 0 ? variants : undefined,
             stock_quantity: variants.length === 0 ? formData.stock_quantity : undefined, // Stock simple si pas de variantes
+            reason: formData.reason || 'Mise à jour manuelle',
         };
 
         try {
@@ -132,6 +134,20 @@ export default function ProductModal({ product, onClose, onSave }) {
                             required
                         />
                     </div>
+
+                    {/* Motif (Seulement en édition) */}
+                    {product && (
+                        <div>
+                            <label className="text-xs font-medium text-ios-gray uppercase block mb-2">Motif du changement (Optionnel)</label>
+                            <input
+                                type="text"
+                                placeholder="Ex: Correction stock, Nouvel arrivage..."
+                                className="w-full bg-black/30 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-ios-blue outline-none"
+                                value={formData.reason}
+                                onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+                            />
+                        </div>
+                    )}
 
                     {/* Catégorie */}
                     <div>

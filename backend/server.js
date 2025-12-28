@@ -15,7 +15,8 @@ app.use(express.json());
 app.use('/api/auth', require('./src/routes/authRoutes'));
 app.use('/api/products', require('./src/routes/productRoutes'));
 app.use('/api/orders', require('./src/routes/orderRoutes'));
-app.use('/api', require('./src/routes/adminRoutes')); // Correction: ajout de src/
+app.use('/api/stock', require('./src/routes/stockRoutes'));
+app.use('/api', require('./src/routes/adminRoutes'));
 
 // Basic Route
 app.get('/', (req, res) => {

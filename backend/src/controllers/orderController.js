@@ -32,6 +32,13 @@ exports.createOrder = async (req, res) => {
             // Deduct stock
             await client.query('UPDATE products SET stock_quantity = stock_quantity - $1 WHERE id = $2', [item.quantity, item.product_id]);
 
+            // Add Stock Movement
+            await client.query(
+                `INSERT INTO stock_movements (product_id, user_id, type, quantity, old_stock, new_stock, reason) 
+                 VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+                [item.product_id, userId, 'sale', item.quantity, product.stock_quantity, product.stock_quantity - item.quantity, `Vente #${orderId}`]
+            );
+
             // Add Order Item
             await client.query(
                 'INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES ($1, $2, $3, $4)',

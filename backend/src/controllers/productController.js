@@ -73,7 +73,21 @@ exports.createProduct = async (req, res) => {
         );
         const productId = productRes.rows[0].id;
 
-        // 3. Insérer les variantes
+        // 3. Enregistrer le prix initial
+        await client.query(
+            "INSERT INTO price_history (product_id, new_price, type) VALUES ($1, $2, 'sale')",
+            [productId, price]
+        );
+
+        // 4. Enregistrer le mouvement de stock initial
+        if (totalStock > 0) {
+            await client.query(
+                "INSERT INTO stock_movements (product_id, type, quantity, old_stock, new_stock, reason) VALUES ($1, $2, $3, $4, $5, $6)",
+                [productId, 'in', totalStock, 0, totalStock, 'Stock initial']
+            );
+        }
+
+        // 5. Insérer les variantes
         if (variants && variants.length > 0) {
             for (const v of variants) {
                 await client.query(
@@ -97,18 +111,51 @@ exports.createProduct = async (req, res) => {
 
 // Mettre à jour
 exports.updateProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { name, price, stock_quantity } = req.body;
+    const { id } = req.params;
+    const { name, price, stock_quantity, reason } = req.body;
+    const userId = req.user?.id;
 
-        await db.query(
+    const client = await db.pool.connect();
+    try {
+        await client.query('BEGIN');
+
+        // Récupérer les anciennes valeurs
+        const oldProductRes = await client.query('SELECT price, stock_quantity FROM products WHERE id = $1', [id]);
+        if (oldProductRes.rows.length === 0) throw new Error('Produit non trouvé');
+        const oldProduct = oldProductRes.rows[0];
+
+        // 1. Mise à jour prix si différent
+        if (parseFloat(oldProduct.price) !== parseFloat(price)) {
+            await client.query(
+                "INSERT INTO price_history (product_id, old_price, new_price, type, changed_by) VALUES ($1, $2, $3, 'sale', $4)",
+                [id, oldProduct.price, price, userId]
+            );
+        }
+
+        // 2. Mise à jour stock si différent
+        if (parseInt(oldProduct.stock_quantity) !== parseInt(stock_quantity)) {
+            const diff = parseInt(stock_quantity) - parseInt(oldProduct.stock_quantity);
+            const type = diff > 0 ? 'adjustment_in' : 'adjustment_out';
+            await client.query(
+                "INSERT INTO stock_movements (product_id, user_id, type, quantity, old_stock, new_stock, reason) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+                [id, userId, type, Math.abs(diff), oldProduct.stock_quantity, stock_quantity, reason || 'Mise à jour manuelle']
+            );
+        }
+
+        // 3. Update SQL
+        await client.query(
             "UPDATE products SET name = $1, price = $2, stock_quantity = $3 WHERE id = $4",
             [name, price, stock_quantity, id]
         );
+
+        await client.query('COMMIT');
         res.json({ message: "Produit mis à jour" });
     } catch (err) {
+        await client.query('ROLLBACK');
         console.error(err.message);
         res.status(500).send('Server Error');
+    } finally {
+        client.release();
     }
 };
 

@@ -9,6 +9,7 @@ import Orders from './pages/Orders';
 import UsersPage from './pages/Users';
 import POS from './pages/POS';
 import MySales from './pages/MySales';
+import StockMovements from './pages/StockMovements';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
 
               <Route path="/pos" element={<POS />} />
               <Route path="/my-sales" element={<MySales />} />
+              <Route path="/stock" element={<StockMovements />} />
             </Route>
           </Route>
 

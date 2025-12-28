@@ -44,7 +44,7 @@ export default function AdminDashboard() {
 
     const fetchSalesChart = async () => {
         try {
-            const data = await api(`/admin/stats/sales-chart?period=${chartPeriod}`);
+            const data = await api(`/stats/sales-chart?period=${chartPeriod}`);
             setSalesChartData(data);
         } catch (error) {
             console.error("Erreur graphique ventes", error);
@@ -54,9 +54,9 @@ export default function AdminDashboard() {
     const fetchAnalytics = async () => {
         try {
             const [products, categories, comp] = await Promise.all([
-                api('/admin/stats/top-products?limit=5'),
-                api('/admin/stats/by-category'),
-                api('/admin/stats/comparisons')
+                api('/stats/top-products?limit=5'),
+                api('/stats/by-category'),
+                api('/stats/comparisons')
             ]);
             setTopProducts(products);
             setCategoryData(categories);
@@ -179,10 +179,53 @@ export default function AdminDashboard() {
                 <SalesChart data={salesChartData} period={chartPeriod} type={chartType} />
             </div>
 
-            {/* Top Products & Category Analysis */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Bottom Row: Top Products, Category Analysis & Alerts */}
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 <TopProductsWidget products={topProducts} loading={analyticsLoading} />
                 <CategoryAnalysis data={categoryData} loading={analyticsLoading} />
+                <div className="glass-panel p-6 rounded-3xl border border-white/5 h-full flex flex-col">
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                            Alertes Stock
+                        </h3>
+                        <span className="bg-red-500/10 text-red-500 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                            {stats?.lowStockCount || 0} critiques
+                        </span>
+                    </div>
+
+                    <div className="space-y-3 flex-1">
+                        {products.filter(p => p.stock_quantity < 5).length > 0 ? (
+                            products.filter(p => p.stock_quantity < 5).slice(0, 5).map(product => (
+                                <div key={product.id} className="flex justify-between items-center p-3 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2 h-8 bg-red-500/20 rounded-full overflow-hidden">
+                                            <div
+                                                className="w-full bg-red-500 rounded-full"
+                                                style={{ height: `${(product.stock_quantity / 5) * 100}%`, marginTop: 'auto' }}
+                                            ></div>
+                                        </div>
+                                        <div>
+                                            <div className="text-sm font-medium text-white line-clamp-1">{product.name}</div>
+                                            <div className="text-[10px] text-ios-gray uppercase mt-0.5">{product.category_name}</div>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="text-sm font-bold text-red-400">{product.stock_quantity}</div>
+                                        <div className="text-[9px] text-ios-gray mt-0.5 italic">RESTANTS</div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="flex flex-col items-center justify-center py-12 text-ios-gray">
+                                <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center text-green-500 mb-3">
+                                    <TrendingUp size={24} />
+                                </div>
+                                <p className="text-sm">Tout est en ordre !</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );
